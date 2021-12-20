@@ -18,6 +18,16 @@ steps:
     scriptLocation: 'scriptPath'
     scriptPath: '$(Build.SourcesDirectory)/acr-write-state-file.sh'
   displayName: "Write state file"
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo "Git Status -------------------------------"
+      git status
+      echo "Git Status -------------------------------"
+      git add test.txt
+      git commit -m "Modify state file"
+      git pull
+      git push
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)'
