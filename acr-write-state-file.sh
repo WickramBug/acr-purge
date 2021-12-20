@@ -3,11 +3,11 @@ PRESENT_TAGS=()
 FILE="acr-image-state.txt"
 REGISTRY=wickramContainerRegistry001
 REPOSITORY=hi_mom_nginx
-DIGEST="sha256:169507c43862fec30cda7b4a6c6e66a4a99f5d9fd19ff5bb1ca5adca79678996"
+DIGEST=""
 
 # Get the production image tag
 image_tag=$(az acr repository show-manifests --name $REGISTRY --repository $REPOSITORY \
-        -o tsv --query "[?digest == '$DIGEST'].[tags[0]]")
+    -o tsv --query "[?digest == '$DIGEST'].[tags[0]]")
 
 # Create file if not exist
 if [ ! -f "$FILE" ]; then
@@ -33,13 +33,29 @@ else
         >"$FILE"
         # Update state file with new tag lists
         printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+        echo "Updated state file with image tag: "$REPOSITORY":"$image_tag
     else
-        # Remove oldest image from the state file if array size is -gt five
-        PRESENT_TAGS=("${PRESENT_TAGS[@]:1}")
-        # Add new image tag to array
-        PRESENT_TAGS+=("$image_tag")
-        >"$FILE"
-        # Update state file with new tag lists
-        printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+        # Get older image tag
+        image_to_remove=${PRESENT_TAGS[0]}
+        # Check if removing image tag matches with latest
+        if [[ "$image_to_remove" != "$image_tag" ]]; then
+            # Unlock oldest image before removing from state file
+            echo "----------------------------------------------------------------------------------"
+            echo "Unlocking image tag: "$REPOSITORY":""$image_to_remove"
+            az acr repository update \
+                --name wickramContainerRegistry001 --image hi_mom_nginx:"$image_to_remove" \
+                --delete-enabled true --write-enabled true
+            echo "Unlocking image COMPLETED for tag: "$REPOSITORY":""$image_to_remove"
+            echo "----------------------------------------------------------------------------------"
+            # Remove oldest image from the state file if array size is -gt five
+            PRESENT_TAGS=("${PRESENT_TAGS[@]:1}")
+            # Add new image tag to array
+            PRESENT_TAGS+=("$image_tag")
+            >"$FILE"
+            # Update state file with new tag lists
+            printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+        else
+            echo "Latest image tag is same as the olderst image tag!"
+        fi
     fi
 fi
