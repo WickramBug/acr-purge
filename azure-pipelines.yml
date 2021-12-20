@@ -19,6 +19,7 @@ resources:
   
 steps:
 - checkout: MyGitHubRepo
+  persistCredentials: true
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)'
