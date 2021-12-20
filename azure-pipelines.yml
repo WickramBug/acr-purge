@@ -13,7 +13,7 @@ resources:
   repositories:
   - repository: MyGitHubRepo
     type: github
-    endpoint: github.com_WickramBug
+    endpoint: WickramBug
     name: WickramBug/acr-purge
     ref: main
   
