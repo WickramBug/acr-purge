@@ -11,8 +11,6 @@ pool:
   
 steps:
 - checkout: self
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)'
