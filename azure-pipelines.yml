@@ -4,46 +4,43 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-latest
 
 resources:
   repositories:
-  - repository: MyGitHubRepo
-    type: github
-    endpoint: WickramBug
-    name: WickramBug/acr-purge
-    ref: main
-  
+    - repository: MyGitHubRepo
+      type: github
+      endpoint: WickramBug
+      name: WickramBug/acr-purge
+      ref: main
 steps:
-- checkout: MyGitHubRepo
-  persistCredentials: true
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)'
-    scriptType: 'bash'
-    scriptLocation: 'scriptPath'
-    scriptPath: '$(Build.SourcesDirectory)/acr-write-state-file.sh'
-  displayName: "Write state file"
-- task: CmdLine@2
-  inputs:
-    script: |
-      git config --global user.email "wickram95@gmail.com"
-      git config --global user.name "WickramBug"
-      git checkout main
-      echo "Git Status -------------------------------"
-      git status
-      echo "Git Status -------------------------------"
-      git add .
-      git commit -m "Modify state file"
-      git pull origin main
-      git push
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)'
-    scriptType: 'bash'
-    scriptLocation: 'scriptPath'
-    scriptPath: '$(Build.SourcesDirectory)/acr-retention.sh'
-  displayName: "Run purge script"
+  - checkout: MyGitHubRepo
+    persistCredentials: true
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: "sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)"
+      scriptType: "bash"
+      scriptLocation: "scriptPath"
+      scriptPath: "$(Build.SourcesDirectory)/acr-write-state-file.sh"
+    displayName: "Write state file"
+  - task: CmdLine@2
+    inputs:
+      script: |
+        git config --global user.email "wickram95@gmail.com"
+        git config --global user.name "WickramBug"
+        git checkout main
+        git add .
+        git commit -m "Update state file via pipeline"
+        git pull origin main
+        git push
+    displayName: "Push updated state file to Repo"
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: "sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)"
+      scriptType: "bash"
+      scriptLocation: "scriptPath"
+      scriptPath: "$(Build.SourcesDirectory)/acr-lock-image.sh"
+    displayName: "Run image lock script"
