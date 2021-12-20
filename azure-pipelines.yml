@@ -21,6 +21,8 @@ steps:
 - task: CmdLine@2
   inputs:
     script: |
+      git config --global user.email "wickram95@gmail.com"
+      git config --global user.name "WickramBug"
       echo "Git Status -------------------------------"
       git status
       echo "Git Status -------------------------------"
