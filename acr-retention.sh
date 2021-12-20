@@ -19,7 +19,7 @@ if [ -f "$FILE" ]; then
             echo "Locking image tag: "$REPOSITORY":"$present_tag
             az acr repository update \
                 --name wickramContainerRegistry001 --image hi_mom_nginx:$present_tag \
-                --delete-enabled true --write-enabled true
+                --delete-enabled false --write-enabled false
             echo "Locking image COMPLETED for tag: "$REPOSITORY":"$present_tag
             echo "----------------------------------------------------------------------------------"
         done
