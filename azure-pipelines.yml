@@ -21,9 +21,9 @@ jobs:
       - checkout: MyGitHubRepo
         persistCredentials: true
       # TEST FAILED ALERT
-      # - script: |
-      #     cat pipelines/chat-notify.yml
-      #   workingDirectory: alert-test
+      - script: |
+          cat pipelines/chat-notify.yml
+        workingDirectory: alert-test
       # TEST FAILED ALERT
       - task: AzureCLI@2
         inputs:
@@ -31,7 +31,7 @@ jobs:
           scriptType: "bash"
           scriptLocation: "scriptPath"
           scriptPath: "$(Build.SourcesDirectory)/acr-write-state-file.sh"
-        displayName: "Write state file"
+        displayName: "Lock ACR Images"
       - task: CmdLine@2
         inputs:
           script: |
@@ -43,13 +43,6 @@ jobs:
             git pull origin main
             git push
         displayName: "Push updated state file to Repo"
-      - task: AzureCLI@2
-        inputs:
-          azureSubscription: "sre-rnd-001(fa56d6cf-aca8-41c3-8883-0720a2835276)"
-          scriptType: "bash"
-          scriptLocation: "scriptPath"
-          scriptPath: "$(Build.SourcesDirectory)/acr-lock-image.sh"
-        displayName: "Run image lock script"
   - job: SendingAlert
     displayName: "Sending Google chat alert"
     dependsOn:
@@ -59,7 +52,7 @@ jobs:
       - template: "alerts/send-alert-acr-image-lock.yaml"
         parameters:
           PIPELINE_NAME: "Asgardeo ACR Image Lock"
-          ENVIRONMENT: "prod"
+          ENVIRONMENT: "PROD"
           PIPELINE_STATUS: "Failed"
           GOOGLE_CHAT_SPACE: "AAAA-y5RxXY"
           GOOGLE_CHAT_KEY: "AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI"

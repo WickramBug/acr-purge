@@ -39,29 +39,45 @@ else
         image_to_remove=${PRESENT_TAGS[0]}
         # Check if removing image tag matches with latest
         if [[ "$image_to_remove" != "$image_tag" ]]; then
-            # Unlock oldest image before removing from state file
-
             # Check if image 1 year old before unlocking the image
-
-            ###
-
-            ###
-            echo "----------------------------------------------------------------------------------"
-            echo "Unlocking image tag: "$REPOSITORY":""$image_to_remove"
-            az acr repository update \
-                --name wickramContainerRegistry001 --image hi_mom_nginx:"$image_to_remove" \
-                --delete-enabled true --write-enabled true
-            echo "Unlocking image COMPLETED for tag: "$REPOSITORY":""$image_to_remove"
-            echo "----------------------------------------------------------------------------------"
-            # Remove oldest image from the state file if array size is -gt five
-            PRESENT_TAGS=("${PRESENT_TAGS[@]:1}")
-            # Add new image tag to array
-            PRESENT_TAGS+=("$image_tag")
-            >"$FILE"
-            # Update state file with new tag lists
-            printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+            # Get image last update date
+            last_updated_on=$(az acr repository show -n wickramContainerRegistry001 --image hi_mom_nginx:v2 \
+                -o tsv --query "[lastUpdateTime]")
+            # Set retention period
+            timeago='365 days ago'
+            # Covert to seconds (Epoch time)
+            dtSec=$(date --date "$last_updated_on" +'%s')
+            taSec=$(date --date "$timeago" +'%s')
+            # Check if image date is less than retention period
+            if [ $dtSec -lt $taSec ]; then
+                # Unlock oldest image before removing from state file
+                echo "----------------------------------------------------------------------------------"
+                echo "Unlocking image tag: "$REPOSITORY":""$image_to_remove"
+                az acr repository update \
+                    --name wickramContainerRegistry001 --image hi_mom_nginx:"$image_to_remove" \
+                    --delete-enabled true --write-enabled true
+                echo "Unlocking image COMPLETED for tag: "$REPOSITORY":""$image_to_remove"
+                echo "----------------------------------------------------------------------------------"
+                # Remove oldest image from the state file if array size is -gt five
+                PRESENT_TAGS=("${PRESENT_TAGS[@]:1}")
+                # Add new image tag to array
+                PRESENT_TAGS+=("$image_tag")
+                >"$FILE"
+                # Update state file with new tag lists
+                printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+            else
+                echo "Image not unlocked as it's not older than a year!"
+            fi
         else
             echo "Latest image tag is same as the oldest image tag!"
         fi
     fi
+    # Lock new image tag
+    echo "----------------------------------------------------------------------------------"
+    echo "Locking image tag: "$REPOSITORY":"$image_tag
+    az acr repository update \
+        --name wickramContainerRegistry001 --image hi_mom_nginx:$image_tag \
+        --delete-enabled false --write-enabled true
+    echo "Locking image COMPLETED for tag: "$REPOSITORY":"$image_tag
+    echo "----------------------------------------------------------------------------------"
 fi
