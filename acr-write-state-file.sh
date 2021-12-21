@@ -23,6 +23,7 @@ PRESENT_TAGS_SIZE=${#PRESENT_TAGS[@]}
 # Check if image tag is already available
 if [[ "${PRESENT_TAGS[*]}" == *"$image_tag"* ]]; then
     # Exit if image tag found
+    echo "Image tag: "$REPOSITORY":"$image_tag" already in the state file!"
     exit
 else
     if ((${#PRESENT_TAGS[@]})); then
@@ -51,7 +52,7 @@ else
                     echo "Unlocking image COMPLETED for tag: "$REPOSITORY":""$image_to_remove"
                     echo "----------------------------------------------------------------------------------"
                     # Remove oldest image from the state file if array size is -gt five
-                    $PRESENT_TAGS=( "${PRESENT_TAGS[@]/$image_to_remove}" )
+                    PRESENT_TAGS=("${PRESENT_TAGS[@]/"$image_to_remove"}")
                     #PRESENT_TAGS=("${PRESENT_TAGS[@]:1}")
                 else
                     echo "Image tag: "$REPOSITORY":"$image_to_remove" not unlocked as it's not older than a year!"
@@ -72,9 +73,9 @@ else
     echo "Locking image COMPLETED for tag: "$REPOSITORY":"$image_tag
     echo "----------------------------------------------------------------------------------"
     # Add new image tag to array
-    PRESENT_TAGS+=("$image_tag")`
+    PRESENT_TAGS+=("$image_tag")
     >"$FILE"
     # Update state file with new tag lists
     printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
-    echo "Updated state file with image tag: "$REPOSITORY":"$image_tag`
+    echo "Updated state file with image tag: "$REPOSITORY":"$image_tag
 fi
