@@ -21,9 +21,9 @@ jobs:
       - checkout: MyGitHubRepo
         persistCredentials: true
       # TEST FAILED ALERT
-      - script: |
-          cat pipelines/chat-notify.yml
-        workingDirectory: alert-test
+      # - script: |
+      #     cat pipelines/chat-notify.yml
+      #   workingDirectory: alert-test
       # TEST FAILED ALERT
       - task: AzureCLI@2
         inputs:
