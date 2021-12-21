@@ -40,6 +40,12 @@ else
         # Check if removing image tag matches with latest
         if [[ "$image_to_remove" != "$image_tag" ]]; then
             # Unlock oldest image before removing from state file
+
+            # Check if image 1 year old before unlocking the image
+
+            ###
+
+            ###
             echo "----------------------------------------------------------------------------------"
             echo "Unlocking image tag: "$REPOSITORY":""$image_to_remove"
             az acr repository update \
@@ -55,7 +61,7 @@ else
             # Update state file with new tag lists
             printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
         else
-            echo "Latest image tag is same as the olderst image tag!"
+            echo "Latest image tag is same as the oldest image tag!"
         fi
     fi
 fi

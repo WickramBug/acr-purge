@@ -1,0 +1,65 @@
+parameters:
+  - name: "PIPELINE_NAME"
+    type: string
+  - name: "ENVIRONMENT"
+    type: string
+  - name: "PIPELINE_STATUS"
+    type: string
+  - name: "GOOGLE_CHAT_SPACE"
+    type: string
+  - name: "GOOGLE_CHAT_KEY"
+    type: string
+  - name: "GOOGLE_CHAT_TOKEN"
+    type: string
+
+steps:
+  - script: |
+      IMAGE_URL="https://www.iconfinder.com/icons/1398912/download/png/512"
+      if [[ "${{ parameters.PIPELINE_STATUS }}" != "Succeeded" ]]; then
+        IMAGE_URL="https://www.iconfinder.com/icons/1398917/download/png/512"
+      fi
+      TITLE="[${{ parameters.ENVIRONMENT }}] - ${{ parameters.PIPELINE_NAME }} - ${{ parameters.PIPELINE_STATUS }}"
+      body=$(cat << EOF
+        {
+            "cards": [
+                {
+                    "header": {
+                        "title": "${TITLE}",
+                        "subtitle": "Asgardeo DevOps",
+                        "imageUrl": "${IMAGE_URL}"
+                    },
+                    "sections": [
+                        {
+                            "widgets": [
+                                {
+                                    "keyValue": {
+                                        "topLabel": "Pipeline Build Number",
+                                        "content": "$(Build.BuildNumber)",
+                                        "button": {
+                                            "textButton": {
+                                                "text": "View",
+                                                "onClick": {
+                                                    "openLink": {
+                                                        "url": "https://dev.azure.com/sre-rnd-001/$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=logs"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+      EOF
+      )
+      GOOGLE_CHAT_URL="https://chat.googleapis.com/v1/spaces/${{ parameters.GOOGLE_CHAT_SPACE }}/messages?key=${{ parameters.GOOGLE_CHAT_KEY }}&token=${{ parameters.GOOGLE_CHAT_TOKEN }}"
+      curl \
+      -X POST \
+      -H 'Content-Type: application/json' \
+      "${GOOGLE_CHAT_URL}"  \
+      -d "$body"
+    displayName: Send alert to chat
+    condition: always()
