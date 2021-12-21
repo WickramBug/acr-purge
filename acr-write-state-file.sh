@@ -3,7 +3,7 @@ PRESENT_TAGS=()
 FILE="acr-image-state.txt"
 REGISTRY=wickramContainerRegistry001
 REPOSITORY=hi_mom_nginx
-DIGEST="sha256:169507c43862fec30cda7b4a6c6e66a4a99f5d9fd19ff5bb1ca5adca79678996"
+DIGEST="sha256:5ef43aba3beef6f73965d6ce357e041af0174e3739ae110693d4c363cf2028ac"
 
 # Get the production image tag
 image_tag=$(az acr repository show-manifests --name $REGISTRY --repository $REPOSITORY \
