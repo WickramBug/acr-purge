@@ -53,9 +53,14 @@ else
                     echo "----------------------------------------------------------------------------------"
                     # Remove oldest image from the state file if array size is -gt five
                     PRESENT_TAGS=("${PRESENT_TAGS[@]/"$image_to_remove"}")
+                    >"$FILE"
+                    # Update state file with new tag lists
+                    printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+                    echo "Removed image tag: "$REPOSITORY":""$image_to_remove"" from state file!"
                     #PRESENT_TAGS=("${PRESENT_TAGS[@]:1}")
                 else
                     echo "Image tag: "$REPOSITORY":"$image_to_remove" not unlocked as it's not older than a year!"
+                    break
                 fi
             else
                 echo "Latest image tag is same as the oldest image tag!"
