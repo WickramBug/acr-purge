@@ -14,6 +14,10 @@ parameters:
     type: string
   - name: "DIGEST"
     type: string
+  - name: "STATE_FILE"
+    type: string
+  - name: "RETENTION_PERIOD"
+    type: string
 
 pool:
   vmImage: ubuntu-latest
@@ -28,9 +32,10 @@ jobs:
         parameters:
           SERVICE_CONNECTION: ${{ parameters.SERVICE_CONNECTION }}
           REGISTRY: ${{ parameters.REGISTRY }}
-          STATE_FILE: ${{ parameters.STATE_FILE }}
           REPOSITORY: ${{ parameters.REPOSITORY }}
           DIGEST: ${{ parameters.DIGEST }}
+          STATE_FILE: ${{ parameters.STATE_FILE }}
+          RETENTION_PERIOD: ${{ parameters.RETENTION_PERIOD }}
       - task: CmdLine@2
         inputs:
           script: |
