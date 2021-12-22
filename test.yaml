@@ -11,6 +11,8 @@
 parameters:
   - name: "SERVICE_CONNECTION"
     type: string
+  - name: "STATE_FILE"
+    type: string
   - name: "REGISTRY"
     type: string
   - name: "REPOSITORY"
@@ -38,7 +40,7 @@ steps:
 
         # Declare variables
         PRESENT_TAGS=()
-        FILE="acr-pord-image-tags.txt"
+        FILE=${{ parameters.STATE_FILE }}
 
         # Read and assign arguments
         REGISTRY=$1

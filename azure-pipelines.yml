@@ -6,6 +6,8 @@
 parameters:
   - name: "SERVICE_CONNECTION"
     type: string
+  - name: "STATE_FILE"
+    type: string
   - name: "REGISTRY"
     type: string
   - name: "REPOSITORY"
@@ -26,13 +28,12 @@ jobs:
         parameters:
           SERVICE_CONNECTION: ${{ parameters.SERVICE_CONNECTION }}
           REGISTRY: ${{ parameters.REGISTRY }}
+          STATE_FILE: ${{ parameters.STATE_FILE }}
           REPOSITORY: ${{ parameters.REPOSITORY }}
           DIGEST: ${{ parameters.DIGEST }}
       - task: CmdLine@2
         inputs:
           script: |
-            echo $(Agent.BuildDirectory)
-            exit 1
             git -C $(Build.SourcesDirectory)/ config user.email "wickram95@gmail.com"
             git -C $(Build.SourcesDirectory)/ config user.name "WickramBug"
             git -C $(Build.SourcesDirectory)/ checkout main
