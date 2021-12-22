@@ -3,6 +3,16 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+parameters:
+  - name: "SERVICE_CONNECTION"
+    type: string
+  - name: "REGISTRY"
+    type: string
+  - name: "REPOSITORY"
+    type: string
+  - name: "DIGEST"
+    type: string
+
 pool:
   vmImage: ubuntu-latest
 
@@ -21,6 +31,11 @@ jobs:
       - checkout: MyGitHubRepo
         persistCredentials: true
       - template: ./test.yaml
+        parameters:
+          SERVICE_CONNECTION: ${{ parameters.SERVICE_CONNECTION }}
+          REGISTRY: ${{ parameters.REGISTRY }}
+          REPOSITORY: ${{ parameters.REPOSITORY }}
+          DIGEST: ${{ parameters.DIGEST }}
       - task: CmdLine@2
         inputs:
           script: |
