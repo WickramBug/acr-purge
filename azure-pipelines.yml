@@ -6,8 +6,6 @@
 parameters:
   - name: "SERVICE_CONNECTION"
     type: string
-  - name: "STATE_FILE"
-    type: string
   - name: "REGISTRY"
     type: string
   - name: "REPOSITORY"
