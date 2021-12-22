@@ -26,11 +26,14 @@ if [ ! -f "$FILE" ]; then
     >"$FILE"
 fi
 
+# Get the production image tag
+image_tag=$(az acr repository show-manifests --name $REGISTRY --repository $REPOSITORY \
+    -o tsv --query "[?digest == '$DIGEST'].[tags[0]]")
+
 if [ ! -z "$image_tag" ]; then
 
     # Read state file to an array
     readarray -t PRESENT_TAGS <"$FILE"
-
     # Get array size
     PRESENT_TAGS_SIZE=${#PRESENT_TAGS[@]}
 
