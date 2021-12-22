@@ -16,7 +16,6 @@ echo $REGISTRY $REPOSITORY "$DIGEST"
 if [[ ! -z $REGISTRY && ! -z $REPOSITORY && ! -z "$DIGEST" ]]; then
     image_tag=$(az acr repository show-manifests --name $REGISTRY --repository $REPOSITORY \
         -o tsv --query "[?digest == '$DIGEST'].[tags[0]]")
-    echo $image_tag
 else
     echo "Argument(s) not found!"
     exit
@@ -101,4 +100,5 @@ if [ ! -z "$image_tag" ]; then
     fi
 else
     echo "Image tag not found for Digest: ""$DIGEST"
+    exit 1   
 fi
