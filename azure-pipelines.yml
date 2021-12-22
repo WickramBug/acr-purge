@@ -36,13 +36,14 @@ jobs:
       - task: CmdLine@2
         inputs:
           script: |
-            git -C $(Agent.BuildDirectory)/ config user.email "wickram95@gmail.com"
-            git -C $(Agent.BuildDirectory)/ config user.name "WickramBug"
-            git -C $(Agent.BuildDirectory)/ checkout main
-            git -C $(Agent.BuildDirectory)/ pull origin main
-            git -C $(Agent.BuildDirectory)/ add $(Agent.BuildDirectory)/acr-image-state.txt
-            git -C $(Agent.BuildDirectory)/ commit -m "[Prod] Update state file via pipeline for the latest build - $(Build.SourceBranchName)"
-            git -C $(Agent.BuildDirectory)/ push origin main
+            set -e
+            git -C $(Build.SourcesDirectory)/ config user.email "wickram95@gmail.com"
+            git -C $(Build.SourcesDirectory)/ config user.name "WickramBug"
+            git -C $(Build.SourcesDirectory)/ checkout main
+            git -C $(Build.SourcesDirectory)/ pull origin main
+            git -C $(Build.SourcesDirectory)/ add $(Build.SourcesDirectory)/acr-image-state.txt
+            git -C $(Build.SourcesDirectory)/ commit -m "[Prod] Update state file via pipeline for the latest build - $(Build.SourceBranchName)"
+            git -C $(Build.SourcesDirectory)/ push origin main
             echo "[Prod] State file update is completed!"
         displayName: "Push updated state file to Repo"
   - job: SendingAlert
