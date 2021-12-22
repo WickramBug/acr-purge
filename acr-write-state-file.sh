@@ -88,7 +88,7 @@ if [ ! -z "$image_tag" ]; then
         echo "Locking image tag: "$REPOSITORY":"$image_tag
         az acr repository update \
             --name wickramContainerRegistry001 --image hi_mom_nginx:$image_tag \
-            --delete-enabled false --write-enabled true
+            --delete-enabled false --write-enabled adasd
         echo "Locking image COMPLETED for tag: "$REPOSITORY":"$image_tag
         echo "----------------------------------------------------------------------------------"
         # Add new image tag to array
