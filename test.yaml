@@ -115,5 +115,4 @@ steps:
             echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}"
             exit 1
         fi
-      arguments: "${{ parameters.REGISTRY }} ${{ parameters.REPOSITORY }} ${{ parameters.DIGEST }}"
     displayName: "Lock ACR Images"
