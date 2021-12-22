@@ -23,7 +23,6 @@ parameters:
     type: string
 
 steps:
-  - template: ./install.yaml
   - task: AzureCLI@2
     inputs:
       azureSubscription: ${{ parameters.SERVICE_CONNECTION }}
