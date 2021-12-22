@@ -36,7 +36,6 @@ jobs:
       - task: CmdLine@2
         inputs:
           script: |
-            set -e
             git -C $(Build.SourcesDirectory)/ config user.email "wickram95@gmail.com"
             git -C $(Build.SourcesDirectory)/ config user.name "WickramBug"
             git -C $(Build.SourcesDirectory)/ checkout main
