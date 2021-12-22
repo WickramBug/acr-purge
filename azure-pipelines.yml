@@ -16,19 +16,11 @@ parameters:
 pool:
   vmImage: ubuntu-latest
 
-resources:
-  repositories:
-    - repository: MyGitHubRepo
-      type: github
-      endpoint: WickramBug
-      name: WickramBug/acr-purge
-      ref: main
-
 jobs:
   - job: LockACRImage
     displayName: "Lock prod ACR image"
     steps:
-      - checkout: MyGitHubRepo
+      - checkout: self
         persistCredentials: true
       - template: ./test.yaml
         parameters:
