@@ -1,3 +1,7 @@
+# Fail the script when a subsuquent command or pipe redirection fails
+set -e
+set -o pipefail
+
 # Declare variables
 PRESENT_TAGS=()
 FILE="acr-image-state.txt"
@@ -5,21 +9,17 @@ FILE="acr-image-state.txt"
 # REPOSITORY=hi_mom_nginx
 # DIGEST="sha256:169507c43862fec30cda7b4a6c6e66a4a99f5d9fd19ff5bb1ca5adca79678996"
 
-# Get arguments
+# Validate arguments
+if [ "$#" -ne 3 ]; then
+    echo "Error: Insufficient arguements!" >&2
+    echo "Usage: bash $0 <REGISTRY> <REPOSITORY> <DIGEST>" >&2
+    exit 1
+fi
+
+# Assign arguments
 REGISTRY=$1
 REPOSITORY=$2
 DIGEST=$3
-
-echo $REGISTRY $REPOSITORY "$DIGEST"
-set -e
-# Get the production image tag
-if [[ ! -z $REGISTRY && ! -z $REPOSITORY && ! -z "$DIGEST" ]]; then
-    image_tag=$(az acr repository show-manifests --name $REGISTRY --repository $REPOSITORY \
-        -o tsv --query "[?digest == '$DIGEST'].[tags[0]]")
-else
-    echo "Argument(s) not found!"
-    exit
-fi
 
 # Create file if not exist
 if [ ! -f "$FILE" ]; then
@@ -88,7 +88,7 @@ if [ ! -z "$image_tag" ]; then
         echo "Locking image tag: "$REPOSITORY":"$image_tag
         az acr repository update \
             --name wickramContainerRegistry001 --image hi_mom_nginx:$image_tag \
-            --delete-enabled false --write-enabled ada
+            --delete-enabled false --write-enabled true
         echo "Locking image COMPLETED for tag: "$REPOSITORY":"$image_tag
         echo "----------------------------------------------------------------------------------"
         # Add new image tag to array
@@ -99,5 +99,5 @@ if [ ! -z "$image_tag" ]; then
         echo "Updated state file with image tag: "$REPOSITORY":"$image_tag
     fi
 else
-    echo "Image tag not found for Digest: ""$DIGEST" 
+    echo "Image tag not found for Digest: ""$DIGEST"
 fi
