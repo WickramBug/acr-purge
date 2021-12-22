@@ -39,7 +39,7 @@ jobs:
       - task: CmdLine@2
         inputs:
           script: |
-            echo $(Agent.BuildDirectory)/s/acr-pord-image-tags.txt
+            cat $(Agent.BuildDirectory)/s/acr-pord-image-tags.txt
             exit 1
             git -C $(Build.SourcesDirectory)/ config user.email "wickram95@gmail.com"
             git -C $(Build.SourcesDirectory)/ config user.name "WickramBug"
