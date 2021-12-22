@@ -1,13 +1,6 @@
-# Fail the script when a subsuquent command or pipe redirection fails
+# Fail script when a subsuquent command or pipe redirection fails
 set -e
 set -o pipefail
-
-# Declare variables
-PRESENT_TAGS=()
-FILE="acr-image-state.txt"
-# REGISTRY=wickramContainerRegistry001
-# REPOSITORY=hi_mom_nginx
-# DIGEST="sha256:169507c43862fec30cda7b4a6c6e66a4a99f5d9fd19ff5bb1ca5adca79678996"
 
 # Validate arguments
 if [ "$#" -ne 3 ]; then
@@ -16,17 +9,21 @@ if [ "$#" -ne 3 ]; then
     exit 1
 fi
 
-# Assign arguments
+# Declare variables
+PRESENT_TAGS=()
+FILE="acr-pord-image-tags.txt"
+
+# Read and assign arguments
 REGISTRY=$1
 REPOSITORY=$2
 DIGEST=$3
 
-# Create file if not exist
+# Create state file if not exist
 if [ ! -f "$FILE" ]; then
     >"$FILE"
 fi
 
-# Get the production image tag
+# Get production image tag
 image_tag=$(az acr repository show-manifests --name $REGISTRY --repository $REPOSITORY \
     -o tsv --query "[?digest == '$DIGEST'].[tags[0]]")
 
@@ -54,7 +51,7 @@ if [ ! -z "$image_tag" ]; then
                     last_updated_on=$(az acr repository show -n $REGISTRY --image $REPOSITORY:"$image_to_remove" \
                         -o tsv --query "[lastUpdateTime]")
                     # Set retention period
-                    timeago='5 days ago'
+                    timeago='365 days ago'
                     # Covert to seconds (Epoch time)
                     dtSec=$(date --date "$last_updated_on" +'%s')
                     taSec=$(date --date "$timeago" +'%s')
@@ -72,7 +69,7 @@ if [ ! -z "$image_tag" ]; then
                         PRESENT_TAGS=("${PRESENT_TAGS[@]/"$image_to_remove"/}")
                         >"$FILE"
                         # Update state file with new tag lists
-                        printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+                        printf "%s\n" ${PRESENT_TAGS[@]} >>acr-pord-image-tags.txt
                         echo "Removed image tag: "$REPOSITORY":""$image_to_remove"" from state file!"
                         #PRESENT_TAGS=("${PRESENT_TAGS[@]:1}")
                     else
@@ -98,9 +95,10 @@ if [ ! -z "$image_tag" ]; then
         PRESENT_TAGS+=("$image_tag")
         >"$FILE"
         # Update state file with new tag lists
-        printf "%s\n" ${PRESENT_TAGS[@]} >>acr-image-state.txt
+        printf "%s\n" ${PRESENT_TAGS[@]} >>acr-pord-image-tags.txt
         echo "Updated state file with image tag: "$REPOSITORY":"$image_tag
     fi
 else
-    echo "Image tag not found for Digest: ""$DIGEST"
+    echo "Image tag not found for Digest: "$REPOSITORY"@""$DIGEST"
+    exit 1
 fi

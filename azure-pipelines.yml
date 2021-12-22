@@ -40,7 +40,7 @@ jobs:
             git -C $(Build.SourcesDirectory)/ config user.name "WickramBug"
             git -C $(Build.SourcesDirectory)/ checkout main
             git -C $(Build.SourcesDirectory)/ pull origin main
-            git -C $(Build.SourcesDirectory)/ add $(Build.SourcesDirectory)/acr-image-state.txt
+            git -C $(Build.SourcesDirectory)/ add $(Build.SourcesDirectory)/acr-pord-image-tags.txt
             git -C $(Build.SourcesDirectory)/ commit -m "[Prod] Update state file via pipeline for the latest build - $(Build.SourceBranchName)"
             git -C $(Build.SourcesDirectory)/ push origin main
             echo "[Prod] State file update is completed!"
