@@ -11,7 +11,7 @@ REPOSITORY=$2
 DIGEST=$3
 
 echo $REGISTRY $REPOSITORY "$DIGEST"
-
+set -e
 # Get the production image tag
 if [[ ! -z $REGISTRY && ! -z $REPOSITORY && ! -z "$DIGEST" ]]; then
     image_tag=$(az acr repository show-manifests --name $REGISTRY --repository $REPOSITORY \
@@ -88,7 +88,7 @@ if [ ! -z "$image_tag" ]; then
         echo "Locking image tag: "$REPOSITORY":"$image_tag
         az acr repository update \
             --name wickramContainerRegistry001 --image hi_mom_nginx:$image_tag \
-            --delete-enabled false --write-enabled adasd
+            --delete-enabled false --write-enabled ada
         echo "Locking image COMPLETED for tag: "$REPOSITORY":"$image_tag
         echo "----------------------------------------------------------------------------------"
         # Add new image tag to array
@@ -99,6 +99,5 @@ if [ ! -z "$image_tag" ]; then
         echo "Updated state file with image tag: "$REPOSITORY":"$image_tag
     fi
 else
-    echo "Image tag not found for Digest: ""$DIGEST"
-    exit 1   
+    echo "Image tag not found for Digest: ""$DIGEST" 
 fi
