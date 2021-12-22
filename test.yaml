@@ -46,7 +46,7 @@ steps:
             touch "${FILE}"
         fi
 
-        # Get image tag
+        # Get image tag for the digest
         image_tag=$(az acr repository show-manifests --name "${REGISTRY}" --repository "${REPOSITORY}" \
             -o tsv --query "[?digest == '${DIGEST}'].[tags[0]]")
 
@@ -64,15 +64,15 @@ steps:
                 for tag in "${PRESENT_TAGS[@]}"; do
                     # Get older image tag
                     image_to_remove=${tag}
-                    # Check if image tag matches with current image tag to support rollback scenario
+                    # Check if image tag matches with current image tag to support rollback scenarios
                     if [[ "${image_to_remove}" != "${image_tag}" ]]; then
-                        # Check if image 1 year old before unlocking the image
+                        # Check if image tag is older thank given retention period before unlocking the image
                         # Get image last update date
                         last_updated_on=$(az acr repository show -n "${REGISTRY}" --image "${REPOSITORY}":"${image_to_remove}" \
                             -o tsv --query "[lastUpdateTime]")
                         # Set retention period
                         timeago="${RETENTION_PERIOD}"
-                        # Covert to seconds (Epoch time)
+                        # Convert to seconds (Epoch time)
                         dtSec=$(date --date "${last_updated_on}" +'%s')
                         taSec=$(date --date "${timeago}" +'%s')
                         # Check if image date is less than retention period
@@ -90,7 +90,7 @@ steps:
                             sed -i "/"${image_to_remove}"/d" "${FILE}"
                             echo "Removed image tag: "${REPOSITORY}":"${image_to_remove}" from state file!"
                         else
-                            echo "Image tag: "${REPOSITORY}":"${image_to_remove}" not unlocked as it's not older than a year!"
+                            echo "Image tag: "${REPOSITORY}":"${image_to_remove}" not unlocked as it's not older than "${timeago}"!"
                             break
                         fi
                     else
