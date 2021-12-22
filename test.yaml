@@ -129,5 +129,5 @@ steps:
             echo "Image tag not found for Digest: "$REPOSITORY"@""$DIGEST"
             exit 1
         fi
-      arguments: "wickramContainerRegistry001 hi_mom_nginx sha256:169507c43862fec30cda7b4a6c6e66a4a99f5d9fd19ff5bb1ca5adca79678996"
+      arguments: "${{ parameters.REGISTRY }} ${{ parameters.REPOSITORY }} ${{ parameters.DIGEST }}"
     displayName: "Lock ACR Images"
