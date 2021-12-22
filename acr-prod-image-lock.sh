@@ -61,7 +61,7 @@ if [ ! -z "$image_tag" ]; then
                         echo "----------------------------------------------------------------------------------"
                         echo "Unlocking image tag: "$REPOSITORY":""$image_to_remove"
                         az acr repository update \
-                            --name wickramContainerRegistry001 --image hi_mom_nginx:"$image_to_remove" \
+                            --name $REGISTRY --image $REPOSITORY:"$image_to_remove" \
                             --delete-enabled true --write-enabled true
                         echo "Unlocking image COMPLETED for tag: "$REPOSITORY":""$image_to_remove"
                         echo "----------------------------------------------------------------------------------"
@@ -87,7 +87,7 @@ if [ ! -z "$image_tag" ]; then
         echo "----------------------------------------------------------------------------------"
         echo "Locking image tag: "$REPOSITORY":"$image_tag
         az acr repository update \
-            --name wickramContainerRegistry001 --image hi_mom_nginx:$image_tag \
+            --name $REGISTRY --image $REPOSITORY:$image_tag \
             --delete-enabled false --write-enabled true
         echo "Locking image COMPLETED for tag: "$REPOSITORY":"$image_tag
         echo "----------------------------------------------------------------------------------"
