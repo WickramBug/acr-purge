@@ -10,7 +10,7 @@ FILE="tesst.txt"
 REGISTRY=wickramContainerRegistry001
 REPOSITORY=hi_mom_nginx
 DIGEST="sha256:169507c43862fec30cda7b4a6c6e66a4a99f5d9fd19ff5bb1ca5adca79678996"
-RETENTION_PERIOD="5 days ago"
+RETENTION_PERIOD="6 days ago"
 
 # Create state file if not exist
 if [ ! -f "${FILE}" ]; then
@@ -58,10 +58,10 @@ if [ ! -z "${image_tag}" ]; then
                     echo "Unlocking image COMPLETED for tag: "${REPOSITORY}":""${image_to_remove}"
                     echo "----------------------------------------------------------------------------------"
                     # Remove oldest image from the state file
-                    sed "/"${image_to_remove}"/d" "${FILE}"
+                    sed -i "/${image_to_remove}/d" "${FILE}"
                     echo "Removed image tag: "${REPOSITORY}":"${image_to_remove}" from state file!"
                 else
-                    echo "Image tag: "${REPOSITORY}":"${image_to_remove}" not unlocked as it's not older than a year!"
+                    echo "Image tag: "${REPOSITORY}":"${image_to_remove}" not unlocked as it's not older than "${timeago}""
                     break
                 fi
             else
@@ -80,7 +80,7 @@ if [ ! -z "${image_tag}" ]; then
     echo "Locking image COMPLETED for tag: "${REPOSITORY}":""${image_tag}"
     echo "----------------------------------------------------------------------------------"
     # Add new image tag to state file
-    echo "${image_tag}" >"${FILE}"
+    echo "${image_tag}" >>"${FILE}"
     echo "Updated state file with image tag: "${REPOSITORY}":""${image_tag}"
 else
     echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}"

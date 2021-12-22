@@ -87,7 +87,7 @@ steps:
                             echo "Unlocking image COMPLETED for tag: "${REPOSITORY}":""${image_to_remove}"
                             echo "----------------------------------------------------------------------------------"
                             # Remove oldest image from the state file
-                            sed "/"${image_to_remove}"/d" "${FILE}"
+                            sed -i "/"${image_to_remove}"/d" "${FILE}"
                             echo "Removed image tag: "${REPOSITORY}":"${image_to_remove}" from state file!"
                         else
                             echo "Image tag: "${REPOSITORY}":"${image_to_remove}" not unlocked as it's not older than a year!"
@@ -109,7 +109,7 @@ steps:
             echo "Locking image COMPLETED for tag: "${REPOSITORY}":""${image_tag}"
             echo "----------------------------------------------------------------------------------"
             # Add new image tag to state file
-            echo "${image_tag}" >"${FILE}"
+            echo "${image_tag}" >>"${FILE}"
             echo "Updated state file with image tag: "${REPOSITORY}":""${image_tag}"
         else
             echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}"
