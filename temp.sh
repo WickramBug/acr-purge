@@ -76,10 +76,10 @@ if (("${#PRESENT_TAGS[@]}")); then
                 echo "Removed image tag: "${REPOSITORY}":"${image_tag_to_remove}" from state file!"
             else
                 echo "Image tag: "${REPOSITORY}":"${image_tag_to_remove}" not unlocked as it's not older than "${timeago}""
-                #break
+                break
             fi
         else
-            echo "Latest image tag is same as the image tag to remove!"
+            echo "Latest image tag "${REPOSITORY}":"${image_tag_to_remove}" is same as the image tag to remove!"
         fi
     done
 else
