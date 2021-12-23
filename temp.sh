@@ -79,7 +79,7 @@ if (("${#PRESENT_TAGS[@]}")); then
                 break
             fi
         else
-            echo "Latest image tag "${REPOSITORY}":"${image_tag_to_remove}" is same as the image tag to remove!"
+            echo "Latest image tag "${REPOSITORY}":"${image_tag_to_remove}" is older than "${timeago}""
         fi
     done
 else

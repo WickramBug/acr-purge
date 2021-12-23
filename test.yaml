@@ -50,10 +50,9 @@ steps:
         # Check retention period
         rg='^[0-9]+$'
         if [[ ${RETENTION_PERIOD} =~ ${rg} && ${RETENTION_PERIOD} -le 12 && ! ${RETENTION_PERIOD} -eq 0 ]]; then
-            RETENTION_PERIOD="${RETENTION_PERIOD} days ago"
+            RETENTION_PERIOD="${RETENTION_PERIOD} months ago"
         else
             echo "Error: invalid retention period, enter months 1-12!" >&2
-            exit 1
         fi
 
         # Get image tag
@@ -62,8 +61,7 @@ steps:
 
         # Exit with error if digest not found in the ACR
         if [ -z "${image_tag}" ]; then
-            echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}"
-            exit 1
+            echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}" >&2
         fi
 
         # Read state file to an array
@@ -110,7 +108,7 @@ steps:
                         break
                     fi
                 else
-                    echo "Latest image tag "${REPOSITORY}":"${image_tag_to_remove}" is same as the image tag to remove!"
+                    echo "Latest image tag "${REPOSITORY}":"${image_tag_to_remove}" is older than "${timeago}""
                 fi
             done
         else
