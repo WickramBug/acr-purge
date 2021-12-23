@@ -53,6 +53,7 @@ steps:
             RETENTION_PERIOD="${RETENTION_PERIOD} months ago"
         else
             echo "Error: invalid retention period, enter months 1-12!" >&2
+            exit 1
         fi
 
         # Get image tag
@@ -62,6 +63,7 @@ steps:
         # Exit with error if digest not found in the ACR
         if [ -z "${image_tag}" ]; then
             echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}" >&2
+            exit 1
         fi
 
         # Read state file to an array

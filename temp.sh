@@ -31,7 +31,7 @@ image_tag=$(az acr repository show-manifests --name "${REGISTRY}" --repository "
 
 # Exit with error if digest not found in the ACR
 if [ -z "${image_tag}" ]; then
-    echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}"
+    echo "Image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}" >&2
     exit 1
 fi
 
