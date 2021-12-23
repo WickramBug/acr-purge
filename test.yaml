@@ -50,7 +50,7 @@ steps:
         # Check retention period
         rg='^[0-9]+$'
         if [[ ${RETENTION_PERIOD} =~ ${rg} && ${RETENTION_PERIOD} -le 12 && ! ${RETENTION_PERIOD} -eq 0 ]]; then
-            RETENTION_PERIOD="${RETENTION_PERIOD} months ago"
+            RETENTION_PERIOD="${RETENTION_PERIOD} days ago"
         else
             echo "Error: invalid retention period, enter months 1-12!" >&2
             exit 1
