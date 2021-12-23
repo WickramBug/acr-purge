@@ -39,7 +39,7 @@ steps:
         REPOSITORY="${{ parameters.REPOSITORY }}"
         DIGEST="${{ parameters.DIGEST }}"
         FILE="${{ parameters.STATE_FILE }}"
-        RETENTION_PERIOD="${{ parameters.RETENTION_PERIOD }} days ago""
+        RETENTION_PERIOD="${{ parameters.RETENTION_PERIOD }}"
         IS_LOCKED="false"
 
         # Create state file if not exist
