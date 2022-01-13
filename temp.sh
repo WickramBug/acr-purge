@@ -6,7 +6,7 @@ set -o pipefail
 PRESENT_TAGS=()
 REGISTRY=wickramContainerRegistry001
 REPOSITORY=hi_mom_nginx
-DIGEST="sha256:a3bc946b11e888fed558dfc432ade6c626c750de52d765f32f3d1f41e2919bb0"
+DIGEST=""
 RETENTION_PERIOD=6
 FILE="tesst.txt"
 IS_LOCKED="false"
@@ -19,20 +19,32 @@ fi
 # Check retention period
 rg='^[0-9]+$'
 if [[ ${RETENTION_PERIOD} =~ ${rg} && ${RETENTION_PERIOD} -le 12 && ! ${RETENTION_PERIOD} -eq 0 ]]; then
-    RETENTION_PERIOD="${RETENTION_PERIOD} months ago"
+    RETENTION_PERIOD="${RETENTION_PERIOD} days ago"
 else
     echo "Error: invalid retention period, enter months 1-12!" >&2
     exit 1
 fi
 
 # Get image tag
-image_tag=$(az acr repository show-manifests --name "${REGISTRY}" --repository "${REPOSITORY}" \
-    -o tsv --query "[?digest == '${DIGEST}'].[tags[0]]")
+# image_tag=$(az acr repository show-manifests --name "${REGISTRY}" --repository "${REPOSITORY}" \
+#     -o tsv --query "[?digest == '${DIGEST}'].[tags[0]]")
+
+# add the login command here from keep
+# <------>
+
+# get image_tags= command from keep
+# <------>
 
 # Exit with error if digest not found in the ACR
-if [ -z "${image_tag}" ]; then
+if [ -z "${image_tags}" ]; then
     echo "Error: image tag not found for Digest: "${REPOSITORY}"@""${DIGEST}" >&2
     exit 1
+fi
+
+if [[ "${#image_tags_arr[@]}" -gt 1 ]]; then
+    image_tag="${image_tags_arr[1]}"
+else
+    image_tag="${image_tags_arr[0]}"
 fi
 
 # Read state file to an array
