@@ -1,0 +1,53 @@
+{
+  "type": "Microsoft.VirtualMachineImages",
+  "apiVersion": "2020-02-14",
+  "location": "eastus2",
+  "dependsOn": [],
+  "tags": {
+    "imagebuilderTemplate": "AzureImageBuilderSIG",
+    "userIdentity": "enabled",
+    "imageTemplate": "<imageTemplateName>"
+  },
+  "identity": {
+    "type": "UserAssigned",
+    "userAssignedIdentities": {
+      "/subscriptions/fa56d6cf-aca8-41c3-8883-0720a2835276/resourceGroups/wickram-rnd/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1654498900": {}
+    }
+  },
+  "properties": {
+    "buildTimeoutInMinutes": 80,
+    "vmProfile": {
+      "vmSize": "Standard_D4as_v4",
+      "osDiskSizeGB": 30
+    },
+    "source": {
+      "type": "PlatformImage",
+      "publisher": "Canonical",
+      "offer": "UbuntuServer",
+      "sku": "18.04-LTS",
+      "version": "latest"
+    },
+    "customize": [
+      {
+        "type": "Shell",
+        "name": "installAzureCLI",
+        "inline": [
+          "curl -Ls -o azure-cli_bionic_all.deb https://aka.ms/InstallAzureCliBionicEdge && sudo dpkg -i azure-cli_bionic_all.deb"
+        ]
+      }
+    ],
+    "distribute": [
+      {
+        "type": "SharedImage",
+        "galleryImageId": "/subscriptions/fa56d6cf-aca8-41c3-8883-0720a2835276/resourceGroups/wickram-rnd/providers/Microsoft.Compute/galleries/myIBSIG/images/linuxImage",
+        "runOutputName": "AsgardeoLinux",
+        "artifactTags": {
+          "source": "azureVmImageBuilder",
+          "baseosimg": "ubuntu1804",
+          "imageTemplate": "<imageTemplateName>"
+        },
+        "replicationRegions": ["eastus2", "centralus"]
+      }
+    ]
+  }
+}
